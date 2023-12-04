@@ -12,10 +12,9 @@
 
 
 
-
 int main()
 {
-	struct CalcStatus status = { .currentOutcome = 0, .numbers = (0, 0, 0), .memory = (0, 0, 0, 0), .numOfOperators = 1, .arithmeticOperType = NoAri, .operationType = NoOp, .funcType = NoFunc, .firstWrite = 0, };
+	struct CalcStatus status = { .currentOutcome = 0, .numbers = (0, 0, 0), .memory = (0, 0, 0, 0), .numOfOperators = 1, .arithmeticOperType = NoAri, .operationType = NoOp, .funcType = NoFunc, .firstWrite = 0, .prevod =""};
 	status.currentOutcome = 0;
 	char contCalc = 'a';
 	while (true) {
@@ -39,10 +38,10 @@ int main()
 			conversion(&status);
 			break;
 
-
 		case KvardatickaRovnice:
 			quadraticFunction(&status);
 			break;
+		
 		default:
 			break;
 		}
@@ -52,7 +51,7 @@ int main()
 		}
 		printf("vstupy: %lf %lf %lf\n", status.numbers[0], status.numbers[1], status.numbers[2]);
 		printf("pamet: %lf %lf %lf %lf\n", status.memory[0], status.memory[1], status.memory[2], status.memory[3]);
-
+		writeIntoHistory(&status);
 		printf("Prejete si pokracovat v dalsi operaci?\n");
 		scanf(" %c", &contCalc);
 
@@ -61,6 +60,46 @@ int main()
 		}
 	}
 	return 0;
+}
+
+void writeIntoHistory(struct CalcStatus* status) {
+	char path[100] = "";
+	FILE *f;
+	if (status->firstWrite == 0) {
+		fopen_s(&f,"history.txt", "a");
+		status->firstWrite = 1;
+	}
+	else {
+		fopen_s(&f, "history.txt", "w");
+	}
+	printf("entered printing into file \n");
+	if (status->operationType == Funkce) {
+		printf("writing history of function\n");
+		if (status->funcType == LogChooseBase || status->funcType == exponential) {
+			fprintf(f, "Typ Operace: %s Typ funkce: %s inputs: %lf %lf Outcome: %lf\n", opTypeStr[status->operationType], funcTypeStr[status->funcType], status->numbers[0], status->numbers[1], status->currentOutcome);
+			fflush(f);
+		}
+		else {
+			printf("single operator function history\n");
+			fprintf(f, "Typ Operace: %s Typ funkce: %s input: %lf Outcome: %lf\n", opTypeStr[status->operationType], funcTypeStr[status->funcType], status->numbers[0], status->currentOutcome);
+			fflush(f);
+		}
+		
+	}
+	if (status->operationType == Aritmeticka) {
+		fprintf(f, "Typ Operace: %s Typ Aritmeticke operace: %s inputs: %lf %lf Outcome: %lf\n", opTypeStr[status->operationType], ariOpTypeStr[status->funcType], status->numbers[0], status->numbers[1], status->currentOutcome);
+		fflush(f);
+	}
+	if (status->operationType == Konverze) {
+		fprintf(f, "Typ Operace: %s Prevod: %s input: %lf Outcome: %lf\n", opTypeStr[status->operationType], status->prevod,  status->numbers[0], status->currentOutcome);
+		fflush(f);
+	}
+	if (status->operationType == KvardatickaRovnice) {
+		fprintf(f, "Typ Operace: %s Rovnice %lfx^2 + (%lfx) + (%lf) koreny: x_1 = %lf x_2 = %lf\n", opTypeStr[status->operationType], status->numbers[0], status->numbers[1], status->numbers[2],status->koreny[0], status->koreny[1]);
+		fflush(f);
+	}
+	
+	fclose(f);
 }
 
 
@@ -86,9 +125,11 @@ void quadraticFunction(struct CalcStatus* status) {
 		double komplexniCast = sqrt(-D) / (2 * a);
 		printf("komplexni koreny:\nx_1 = %.2lf+%.2lfi and x_2 = %.2f-%.2fi\n", realniCast, komplexniCast, realniCast, komplexniCast);
 	}
-
+	status->koreny[0] = koren[0];
+	status->koreny[1] = koren[1];
 
 }
+
 int conversion(struct CalcStatus* status) {
 
 	int jakyPrevod = 0;
@@ -175,7 +216,7 @@ int conversion(struct CalcStatus* status) {
 
 int printOutcome(struct CalcStatus* status) {
 
-	if (status->operationType != KvardatickaRovnice) {
+	if (status->operationType == KvardatickaRovnice) {
 		return 0;
 	}
 	if (status->operationType != Konverze) {
@@ -219,29 +260,29 @@ double factorial(double input) {
 int executeFunction(CalcStatus* status) {
 
 	switch (status->funcType) {
-	case 1:
+	case NaturalLog:
 		status->currentOutcome = log(status->numbers[0]);
 		return 0;
-	case 2:
+	case Log10:
 		status->currentOutcome = log10(status->numbers[0]);
 		return 0;
-	case 3:
+	case LogChooseBase:
 		status->currentOutcome = log2(status->numbers[0]) / log2(status->numbers[1]);
 		return 0;
-	case 4:
+	case Factorial:
 		printf("You chose factorial, converting your input number to closest integer\n");
 		status->currentOutcome = factorial(status->numbers[0]);
 		return 0;
-	case 5:
+	case sinus:
 		status->currentOutcome = sin(status->numbers[0]);
 		return 0;
-	case 6:
+	case cosinus:
 		status->currentOutcome = cos(status->numbers[0]);
 		return 0;
-	case 7:
+	case tangens:
 		status->currentOutcome = tan(status->numbers[0]);
 		return 0;
-	case 8:
+	case exponential:
 		status->currentOutcome = pow(status->numbers[0], status->numbers[1]);
 		return 0;
 	default:
