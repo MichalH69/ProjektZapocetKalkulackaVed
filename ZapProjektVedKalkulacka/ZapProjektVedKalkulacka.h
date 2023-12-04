@@ -19,6 +19,7 @@ struct CalcStatus {
 	OperationType operationType;
 	FunctionType funcType;
 	int firstWrite;
+	char prevod[30];
 
 };
 
@@ -46,3 +47,4 @@ void enterIntoMemory(CalcStatus* status);
 
 char askIfMemory();
 
+void arithmeticOperation(CalcStatus* status);
