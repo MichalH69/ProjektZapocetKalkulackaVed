@@ -4,12 +4,41 @@
 #pragma once
 
 #include <iostream>
+#define FOREACH_OperationType(OperationType) OperationType(Aritmeticka)   OperationType(Funkce)  OperationType(Konverze)   OperationType(KvardatickaRovnice)  OperationType(NoOp)
+#define FOREACH_FunctionType(FunctionType) FunctionType(NaturalLog)   FunctionType(Log10)  FunctionType(LogChooseBase)   FunctionType(Factorial)  FunctionType(sinus) FunctionType(cosinus)   FunctionType(tangens)  FunctionType(exponential) FunctionType(NoFunc)
+#define FOREACH_AriOperation(AriOperation) AriOperation(Plus)   AriOperation(Minus)  AriOperation(Multiply)   AriOperation(Divide)  AriOperation(Mod) AriOperation(Power) AriOperation(Root) AriOperation(NoAri)
 
-enum OperationType { Aritmeticka = 1, Funkce, Konverze, KvardatickaRovnice, NoOp };
+#define GENERATE_ENUM(ENUM) ENUM,
+#define GENERATE_STRING(STRING) #STRING,
 
-enum FunctionType { NaturalLog = 1, Log10, LogChooseBase, Factorial, sinus, cosinus, tangens, exponential, NoFunc };
+enum OperationType {
+	FOREACH_OperationType(GENERATE_ENUM)
+};
 
-enum AriOperation { Plus = 1, Minus, Multiply, Divide, Mod, Power, Root, NoAri };
+static const char* opTypeStr[] = {
+	FOREACH_OperationType(GENERATE_STRING)
+};
+
+enum FunctionType {
+	FOREACH_FunctionType(GENERATE_ENUM)
+};
+
+static const char* funcTypeStr[] = {
+	FOREACH_FunctionType(GENERATE_STRING)
+};
+enum AriOperation {
+	FOREACH_AriOperation(GENERATE_ENUM)
+};
+
+static const char* ariOpTypeStr[] = {
+	FOREACH_AriOperation(GENERATE_STRING)
+};
+
+//enum OperationType { Aritmeticka = 1, Funkce, Konverze, KvardatickaRovnice, NoOp };
+
+//enum FunctionType { NaturalLog = 1, Log10, LogChooseBase, Factorial, sinus, cosinus, tangens, exponential, NoFunc };
+
+//enum AriOperation { Plus = 1, Minus, Multiply, Divide, Mod, Power, Root, NoAri };
 struct CalcStatus {
 	double currentOutcome;
 	double numbers[3];
@@ -20,9 +49,12 @@ struct CalcStatus {
 	FunctionType funcType;
 	int firstWrite;
 	char prevod[30];
+	double koreny[2];
+
 
 };
 
+void writeIntoHistory(struct CalcStatus* status);
 int printOutcome(struct CalcStatus* status);
 void quadraticFunction(struct CalcStatus* status);
 
