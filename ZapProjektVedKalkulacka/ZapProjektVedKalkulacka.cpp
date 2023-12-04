@@ -27,7 +27,7 @@ int main()
 		}
 		switch (status.operationType) {
 		case Aritmeticka:
-			// TODO
+			arithmeticOperation(&status);
 			break;
 
 		case Funkce:
@@ -153,6 +153,7 @@ int conversion(struct CalcStatus* status) {
 			strcpy(jednotka1, "C");
 			strcpy(jednotka2, "F");
 			zadanyPrevod = 1;
+			strcpy(status->prevod, "C na F");
 			printf("curr outcome %lf \n", status->currentOutcome);
 			break;
 		case 2:
@@ -160,42 +161,49 @@ int conversion(struct CalcStatus* status) {
 			strcpy(jednotka1, "F");
 			strcpy(jednotka2, "C");
 			zadanyPrevod = 1;
+			strcpy(status->prevod, "F na C");
 			break;
 		case 3:
-			status->currentOutcome = (input * 1.8) + 32;
+			status->currentOutcome = input + 273.15 ;
 			strcpy(jednotka1, "C");
-			strcpy(jednotka2, "F");
+			strcpy(jednotka2, "K");
 			zadanyPrevod = 1;
+			strcpy(status->prevod, "C na K");
 			break;
 		case 4:
-			status->currentOutcome = (input * 1.8) + 32;
-			strcpy(jednotka1, "C");
-			strcpy(jednotka2, "F");
+			status->currentOutcome = ((input - 32) * 5 / 9) + 273.15;
+			strcpy(jednotka1, "F");
+			strcpy(jednotka2, "K");
 			zadanyPrevod = 1;
+			strcpy(status->prevod, "F na K");
 			break;
 		case 5:
-			status->currentOutcome = (input * 1.8) + 32;
-			strcpy(jednotka1, "C");
-			strcpy(jednotka2, "F");
+			status->currentOutcome = input - 273.15;
+			strcpy(jednotka1, "K");
+			strcpy(jednotka2, "C");
 			zadanyPrevod = 1;
+			strcpy(status->prevod, "K na C");
 			break;
 		case 6:
-			status->currentOutcome = (input * 1.8) + 32;
-			strcpy(jednotka1, "C");
+			status->currentOutcome = (input - 273.15) * 1.8 + 32;
+			strcpy(jednotka1, "K");
 			strcpy(jednotka2, "F");
 			zadanyPrevod = 1;
+			strcpy(status->prevod, "K na F");
 			break;
 		case 7:
-			status->currentOutcome = (input * 1.8) + 32;
-			strcpy(jednotka1, "C");
-			strcpy(jednotka2, "F");
+			status->currentOutcome = input * 0.01745329;
+			strcpy(jednotka1, "s");
+			strcpy(jednotka2, "r");
 			zadanyPrevod = 1;
+			strcpy(status->prevod, "Stupne na rad");
 			break;
 		case 8:
-			status->currentOutcome = (input * 1.8) + 32;
-			strcpy(jednotka1, "C");
-			strcpy(jednotka2, "F");
+			status->currentOutcome = input * 57.2957795;
+			strcpy(jednotka1, "r");
+			strcpy(jednotka2, "s");
 			zadanyPrevod = 1;
+			strcpy(status->prevod, "Rad na stupne");
 			break;
 		default:
 			printf("\nZadali jste nespravny vstup.");
@@ -293,14 +301,55 @@ int executeFunction(CalcStatus* status) {
 
 void arithmeticOperation(CalcStatus* status) {
 	char* input;
-	printf("Choose arithemtic operation: plus(1), minus(2), nasobeni(3), deleni(4)");
+	int pokracovat;
+	printf("\nVyberte si aritmetickou operaci: Soucet - 1, Rozdil - 2, Soucin - 3, Podil - 4, Modulo - 5, Umocnit - 6, Odmocnit - 7");
 	while (true) {
-		// ask for arithmetic type and save it in status.arithmeticOperType
-		// status->numbers[0] status->numbers[1]
+		scanf(" %d", &status->arithmeticOperType);
+		
+		switch (status->arithmeticOperType)
+		{
+		case 1:
+			status->currentOutcome = status->numbers[0] + status->numbers[1];
+			pokracovat = 1;
+			break;
+		case 2:
+			status->currentOutcome = status->numbers[0] - status->numbers[1];
+			pokracovat = 1;
+			break;
+		case 3:
+			status->currentOutcome = status->numbers[0] * status->numbers[1];
+			pokracovat = 1;
+			break;
+		case 4:
+			status->currentOutcome = status->numbers[0] / status->numbers[1];
+			pokracovat = 1;
+			break;
+		case 5:
+			printf("\nZvolili jste operaci modulo. Koeficienty prevadim na nejblizsi cele cisla.");
+			status->currentOutcome = (int)status->numbers[0] % (int)status->numbers[1];
+			pokracovat = 1;
+			break;
+		case 6:
+			status->currentOutcome = pow(status->numbers[0],status->numbers[1]);
+			pokracovat = 1;
+			break;
+		case 7:
+			status->currentOutcome = pow(status->numbers[0],1/status->numbers[1]);
+			pokracovat = 1;
+			break;
+
+		default:
+			printf("Zadali jste neplatnou operaci!");
+			break;
+		}
+		if (pokracovat == 1)
+		{
+			break;
+		}
+		printf("\nVyberte si aritmetickou operaci: Soucet - 1, Rozdil - 2, Soucin - 3, Podil - 4, Modulo - 5, Umocnit - 6, Odmocnit - 7");
 	}
-	// perform operation
-	status->arithmeticOperType = Minus;
-	status->currentOutcome = 0;
+
+
 
 }
 

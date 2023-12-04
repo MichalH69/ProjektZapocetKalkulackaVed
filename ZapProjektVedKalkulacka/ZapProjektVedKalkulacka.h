@@ -51,6 +51,7 @@ struct CalcStatus {
 	char prevod[30];
 	double koreny[2];
 
+
 };
 
 void writeIntoHistory(struct CalcStatus* status);
@@ -78,3 +79,4 @@ void enterIntoMemory(CalcStatus* status);
 
 char askIfMemory();
 
+void arithmeticOperation(CalcStatus* status);
