@@ -48,9 +48,8 @@ struct CalcStatus {
 	OperationType operationType;
 	FunctionType funcType;
 	int firstWrite;
-	char prevod[30];
-	double koreny[2];
-
+	char prevod[1024];
+	char kvadRovniceKoreny[1024];
 
 };
 
