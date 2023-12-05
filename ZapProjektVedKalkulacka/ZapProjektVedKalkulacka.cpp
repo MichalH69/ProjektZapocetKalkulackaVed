@@ -112,6 +112,7 @@ void quadraticFunction(struct CalcStatus* status) {
 	double D = b * b - 4 * a * c;
 	double koren[2];
 
+	system("cls");
 	printf("Rovnice: %.2lfx^2 + (%.2lfx) + (%.2lf) = 0\n", a, b, c);
 	if (D > 0) {
 		koren[0] = (-b + sqrt(D)) / (2 * a);
@@ -129,7 +130,7 @@ void quadraticFunction(struct CalcStatus* status) {
 		double realniCast = -b / (2 * a);
 		double komplexniCast = sqrt(-D) / (2 * a);
 		snprintf(status->kvadRovniceKoreny, 1024, "komplexni koreny: x_1 = %.2lf+%.2lfi and x_2 = %.2f-%.2fi\n", realniCast, komplexniCast, realniCast, komplexniCast);
-		printf("Komplexni koreny: x_1 = %.2lf+%.2lfi and x_2 = %.2f-%.2fi\n", realniCast, komplexniCast, realniCast, komplexniCast);
+		printf("\nKomplexni koreny: \nx_1 = %.2lf+%.2lfi\nx_2 = %.2f-%.2fi\n\n", realniCast, komplexniCast, realniCast, komplexniCast);
 	}
 
 }
