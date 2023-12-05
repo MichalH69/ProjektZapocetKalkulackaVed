@@ -49,8 +49,8 @@ int main()
 			printf("unexpected error occured");
 			return 1;
 		}
-		printf("vstupy: %lf %lf %lf\n", status.numbers[0], status.numbers[1], status.numbers[2]);
-		printf("pamet: %lf %lf %lf %lf\n", status.memory[0], status.memory[1], status.memory[2], status.memory[3]);
+		printf("vstupy: %.3lf %.3lf %.3lf\n", status.numbers[0], status.numbers[1], status.numbers[2]);
+		printf("Aktualni Pamet: A:%.3lf B:%.3lf C:%.3lf d:%.3lf\n", status.memory[0], status.memory[1], status.memory[2], status.memory[3]);
 		writeIntoHistory(&status);
 		printf("Prejete si pokracovat v dalsi operaci?\n");
 		scanf(" %c", &contCalc);
@@ -72,15 +72,15 @@ void writeIntoHistory(struct CalcStatus* status) {
 	else {
 		fopen_s(&f, "history.txt", "w");
 	}
-	printf("entered printing into file \n");
+
 	if (status->operationType == Funkce) {
-		printf("writing history of function\n");
+
 		if (status->funcType == LogChooseBase || status->funcType == exponential) {
 			fprintf(f, "Typ Operace: %s Typ funkce: %s inputs: %lf %lf Outcome: %lf\n", opTypeStr[status->operationType], funcTypeStr[status->funcType], status->numbers[0], status->numbers[1], status->currentOutcome);
 			fflush(f);
 		}
 		else {
-			printf("single operator function history\n");
+
 			fprintf(f, "Typ Operace: %s Typ funkce: %s input: %lf Outcome: %lf\n", opTypeStr[status->operationType], funcTypeStr[status->funcType], status->numbers[0], status->currentOutcome);
 			fflush(f);
 		}
@@ -95,7 +95,7 @@ void writeIntoHistory(struct CalcStatus* status) {
 		fflush(f);
 	}
 	if (status->operationType == KvardatickaRovnice) {
-		fprintf(f, "Typ Operace: %s Rovnice %lfx^2 + (%lfx) + (%lf) koreny: x_1 = %lf x_2 = %lf\n", opTypeStr[status->operationType], status->numbers[0], status->numbers[1], status->numbers[2],status->koreny[0], status->koreny[1]);
+		fprintf(f, "Typ Operace: %s Rovnice %lfx^2 + (%lfx) + (%lf) %s\n", opTypeStr[status->operationType], status->numbers[0], status->numbers[1], status->numbers[2], status->kvadRovniceKoreny);
 		fflush(f);
 	}
 	
@@ -109,24 +109,25 @@ void quadraticFunction(struct CalcStatus* status) {
 	double c = status->numbers[2];
 	double D = b * b - 4 * a * c;
 	double koren[2];
-	printf("rovnice: %lfx^2 + (%lfx) + (%lf)\n", a, b, c);
+	printf("rovnice: %.2lfx^2 + (%.2lfx) + (%.2lf)\n", a, b, c);
 	if (D > 0) {
 		koren[0] = (-b + sqrt(D)) / (2 * a);
 		koren[1] = (-b - sqrt(D)) / (2 * a);
-		printf("koreny:\nx_1 = %lf \nx_2 = %lf\n", koren[0], koren[1]);
+		snprintf(status->kvadRovniceKoreny, 1024, "koreny: x_1 = %lf x_2 = %lf\n", koren[0], koren[1]);
+		printf("koreny: x_1 = %.2lf x_2 = %.2lf\n", koren[0], koren[1]);
 	}
 	else if (D == 0) {
 		koren[0] = -b / (2 * a);
-		printf("koren je zdvojeny:\nx_1 = x_2 = %.2lf\n", koren[0]);
+		snprintf(status->kvadRovniceKoreny, 1024, "koren je zdvojeny: x_1 = x_2 = %.2lf\n", koren[0]);
+		printf("koren je zdvojeny: x_1 = x_2 = %.2lf\n", koren[0]);
 	}
 
 	else {
 		double realniCast = -b / (2 * a);
 		double komplexniCast = sqrt(-D) / (2 * a);
-		printf("komplexni koreny:\nx_1 = %.2lf+%.2lfi and x_2 = %.2f-%.2fi\n", realniCast, komplexniCast, realniCast, komplexniCast);
+		snprintf(status->kvadRovniceKoreny, 1024, "komplexni koreny: x_1 = %.2lf+%.2lfi and x_2 = %.2f-%.2fi\n", realniCast, komplexniCast, realniCast, komplexniCast);
+		printf("komplexni koreny: x_1 = %.2lf+%.2lfi and x_2 = %.2f-%.2fi\n", realniCast, komplexniCast, realniCast, komplexniCast);
 	}
-	status->koreny[0] = koren[0];
-	status->koreny[1] = koren[1];
 
 }
 
@@ -572,10 +573,9 @@ int intro(CalcStatus* status) {
 		}
 		switch (operation) {
 		case 1:
-			printf("enter arithmetic");
 			status->firstWrite = 0;
 			status->numOfOperators = 2;
-			status->operationType = Aritmeticka;
+			status->operationType = Aritmeticka; // ASK FOR OPERATION TYPE HERE ALREADY
 			select_done = 1;
 			break;
 
@@ -589,14 +589,14 @@ int intro(CalcStatus* status) {
 		case 3:
 			status->firstWrite = 0;
 			status->numOfOperators = 1;
-			status->operationType = Konverze;
+			status->operationType = Konverze; //ASK FOR CONVERSION TYPE HERE
 			select_done = 1;
 			break;
 
 		case 4:
 			status->firstWrite = 0;
 			status->numOfOperators = 3;
-			status->operationType = KvardatickaRovnice;
+			status->operationType = KvardatickaRovnice; // print some formula like ax^2 + bx + c so user knows what numbers he's inputting
 			select_done = 1;
 			break;
 		default:
