@@ -46,15 +46,16 @@ int main()
 			break;
 		}
 		if (printOutcome(&status) != 0) {
-			printf("unexpected error occured");
+			printf("Neocekavana chyba");
 			return 1;
 		}
-		printf("vstupy: %lf %lf %lf\n", status.numbers[0], status.numbers[1], status.numbers[2]);
-		printf("pamet: %lf %lf %lf %lf\n", status.memory[0], status.memory[1], status.memory[2], status.memory[3]);
+		
+		//printf("Vstupy: %.2lf %.2lf %.2lf\n", status.numbers[0], status.numbers[1], status.numbers[2]);
+		//printf("Pamet: %.2lf %.2lf %.2lf %.2lf\n", status.memory[0], status.memory[1], status.memory[2], status.memory[3]);
 		writeIntoHistory(&status);
-		printf("Prejete si pokracovat v dalsi operaci?\n");
+		printf("Prejete si pokracovat v dalsi operaci? (a/n): ");
 		scanf(" %c", &contCalc);
-
+		system("cls");
 		if (contCalc == 'n') {
 			break;
 		}
@@ -72,30 +73,30 @@ void writeIntoHistory(struct CalcStatus* status) {
 	else {
 		fopen_s(&f, "history.txt", "w");
 	}
-	printf("entered printing into file \n");
+	//printf("entered printing into file \n");
 	if (status->operationType == Funkce) {
-		printf("writing history of function\n");
+		//printf("writing history of function\n");
 		if (status->funcType == LogChooseBase || status->funcType == exponential) {
-			fprintf(f, "Typ Operace: %s Typ funkce: %s inputs: %lf %lf Outcome: %lf\n", opTypeStr[status->operationType], funcTypeStr[status->funcType], status->numbers[0], status->numbers[1], status->currentOutcome);
+			fprintf(f, "Typ Operace: %s Typ funkce: %s inputs: %.2lf %.2lf Outcome: %.2lf\n", opTypeStr[status->operationType], funcTypeStr[status->funcType], status->numbers[0], status->numbers[1], status->currentOutcome);
 			fflush(f);
 		}
 		else {
-			printf("single operator function history\n");
-			fprintf(f, "Typ Operace: %s Typ funkce: %s input: %lf Outcome: %lf\n", opTypeStr[status->operationType], funcTypeStr[status->funcType], status->numbers[0], status->currentOutcome);
+			//printf("single operator function history\n");
+			fprintf(f, "Typ Operace: %s Typ funkce: %s input: %.2lf Outcome: %.2lf\n", opTypeStr[status->operationType], funcTypeStr[status->funcType], status->numbers[0], status->currentOutcome);
 			fflush(f);
 		}
 		
 	}
 	if (status->operationType == Aritmeticka) {
-		fprintf(f, "Typ Operace: %s Typ Aritmeticke operace: %s inputs: %lf %lf Outcome: %lf\n", opTypeStr[status->operationType], ariOpTypeStr[status->funcType], status->numbers[0], status->numbers[1], status->currentOutcome);
+		fprintf(f, "Typ Operace: %s Typ Aritmeticke operace: %s inputs: %.2lf %.2lf Outcome: %.2lf\n", opTypeStr[status->operationType], ariOpTypeStr[status->funcType], status->numbers[0], status->numbers[1], status->currentOutcome);
 		fflush(f);
 	}
 	if (status->operationType == Konverze) {
-		fprintf(f, "Typ Operace: %s Prevod: %s input: %lf Outcome: %lf\n", opTypeStr[status->operationType], status->prevod,  status->numbers[0], status->currentOutcome);
+		fprintf(f, "Typ Operace: %s Prevod: %s input: %.2lf Outcome: %.2lf\n", opTypeStr[status->operationType], status->prevod,  status->numbers[0], status->currentOutcome);
 		fflush(f);
 	}
 	if (status->operationType == KvardatickaRovnice) {
-		fprintf(f, "Typ Operace: %s Rovnice %lfx^2 + (%lfx) + (%lf) koreny: x_1 = %lf x_2 = %lf\n", opTypeStr[status->operationType], status->numbers[0], status->numbers[1], status->numbers[2],status->koreny[0], status->koreny[1]);
+		fprintf(f, "Typ Operace: %s Rovnice %.2lfx^2 + (%.2lfx) + (%.2lf) koreny: x_1 = %.2lf x_2 = %.2lf\n", opTypeStr[status->operationType], status->numbers[0], status->numbers[1], status->numbers[2],status->koreny[0], status->koreny[1]);
 		fflush(f);
 	}
 	
@@ -109,21 +110,22 @@ void quadraticFunction(struct CalcStatus* status) {
 	double c = status->numbers[2];
 	double D = b * b - 4 * a * c;
 	double koren[2];
-	printf("rovnice: %lfx^2 + (%lfx) + (%lf)\n", a, b, c);
+	system("cls");
+	printf("Rovnice: %.2lfx^2 + (%.2lfx) + (%.2lf) = 0\n", a, b, c);
 	if (D > 0) {
 		koren[0] = (-b + sqrt(D)) / (2 * a);
 		koren[1] = (-b - sqrt(D)) / (2 * a);
-		printf("koreny:\nx_1 = %lf \nx_2 = %lf\n", koren[0], koren[1]);
+		printf("\nKoreny:\nx_1 = %.2lf \nx_2 = %.2lf\n\n", koren[0], koren[1]);
 	}
 	else if (D == 0) {
 		koren[0] = -b / (2 * a);
-		printf("koren je zdvojeny:\nx_1 = x_2 = %.2lf\n", koren[0]);
+		printf("Koren je dvojity:\nx_1 = x_2 = %.2lf\n", koren[0]);
 	}
 
 	else {
 		double realniCast = -b / (2 * a);
 		double komplexniCast = sqrt(-D) / (2 * a);
-		printf("komplexni koreny:\nx_1 = %.2lf+%.2lfi and x_2 = %.2f-%.2fi\n", realniCast, komplexniCast, realniCast, komplexniCast);
+		printf("\nKomplexni koreny:\nx_1 = %.2lf+%.2lfi and x_2 = %.2f-%.2fi\n\n", realniCast, komplexniCast, realniCast, komplexniCast);
 	}
 	status->koreny[0] = koren[0];
 	status->koreny[1] = koren[1];
@@ -137,24 +139,25 @@ int conversion(struct CalcStatus* status) {
 	char jednotka2[10] = "";
 	int zadanyPrevod = 0;
 	double input = status->numbers[0];
-	printf("Co si prejete prevest?\n1 - C na F\n2 - F na C\n3 - C na K\n4 - F na K\n5 - K na C\n6 - K na F\n7 - Stupne na radiany\n8 - Radiany na stupne\n");
+	system("cls");
+	printf("Typy prevodu:\n\n1 - C na F\n2 - F na C\n3 - C na K\n4 - F na K\n5 - K na C\n6 - K na F\n7 - Stupne na radiany\n8 - Radiany na stupne\n\nZadejte pozadovany prevod: ");
 
 
 	while (zadanyPrevod == 0) {
 		if (scanf(" %d", &jakyPrevod) != 1) {
-			printf("invalid input!, Enter new value\n");
+			printf("Neplatny vstup!\n");
 			continue;
 		}
 		switch (jakyPrevod)
 		{
 		case 1:
-			printf("INPUT: %lf\n", input);
+			//printf("INPUT: %.2lf\n", input);
 			status->currentOutcome = (input * 1.8) + 32;
 			strcpy(jednotka1, "C");
 			strcpy(jednotka2, "F");
 			zadanyPrevod = 1;
 			strcpy(status->prevod, "C na F");
-			printf("curr outcome %lf \n", status->currentOutcome);
+			//printf("curr outcome %.2lf \n", status->currentOutcome);
 			break;
 		case 2:
 			status->currentOutcome = (input - 32) * 5 / 9;
@@ -210,34 +213,35 @@ int conversion(struct CalcStatus* status) {
 			break;
 		}
 		if (zadanyPrevod == 0) {
-			printf("Co si prejete prevest?\n1 - C na F\n2 - F na C\n3 - C na K\n4 - F na K\n5 - K na C\n6 - K na F\n7 - Stupne na radiany\n8 - Radiany na stupne");
+			printf("\nTypy prevodu:\n\n1 - C na F\n2 - F na C\n3 - C na K\n4 - F na K\n5 - K na C\n6 - K na F\n7 - Stupne na radiany\n8 - Radiany na stupne\n\nZadejte pozadovany prevod: ");
 			scanf("@%*[^\n]");
 		}
 		else {
 			break;
 		}
 	}
-	printf("%lf%s je %lf%s", input, jednotka1, status->currentOutcome, jednotka2);
+	system("cls");
+	printf("%.2lf%s je %.2lf%s\n", input, jednotka1, status->currentOutcome, jednotka2);
 
 	return 0;
 }
 
 int printOutcome(struct CalcStatus* status) {
-
+	
 	if (status->operationType == KvardatickaRovnice) {
 		return 0;
 	}
 	if (status->operationType != Konverze) {
-		printf("Vysledek operace: %lf", status->currentOutcome);
+		printf("Vysledek operace: %.2lf\n", status->currentOutcome);
 	}
 
 	char saveOutcome = ' ';
-	printf("chcete ulozit vysledek do pameti? y/n\n");
+	printf("\nChcete ulozit vysledek do pameti? (y/n): ");
 	while (true) {
 		scanf(" %c", &saveOutcome);
 		system("cls");
 		if (saveOutcome != 'y' && saveOutcome != 'n') {
-			printf("nevalidni input! Zadejte znova\n");
+			printf("Neplatny vstup!\n");
 			printf("save outcome: %c\n", saveOutcome);
 			printf("chcete ulozit status->currentOutcome do pameti? y/n\n");
 			scanf("%*[^\n]");
@@ -278,7 +282,8 @@ int executeFunction(CalcStatus* status) {
 		status->currentOutcome = log2(status->numbers[0]) / log2(status->numbers[1]);
 		return 0;
 	case Factorial:
-		printf("You chose factorial, converting your input number to closest integer\n");
+		system("cls");
+		printf("Zvolili jste faktorial, prevadim na nejblizsi celou hodnotu.\n");
 		status->currentOutcome = factorial(status->numbers[0]);
 		return 0;
 	case sinus:
@@ -294,7 +299,7 @@ int executeFunction(CalcStatus* status) {
 		status->currentOutcome = pow(status->numbers[0], status->numbers[1]);
 		return 0;
 	default:
-		printf("unexpected error occured...\n");
+		printf("Nastala neocekavana chyba!\n");
 		return 1;
 	}
 }
@@ -302,10 +307,12 @@ int executeFunction(CalcStatus* status) {
 void arithmeticOperation(CalcStatus* status) {
 	char* input;
 	int pokracovat;
-	printf("\nVyberte si aritmetickou operaci: Soucet - 1, Rozdil - 2, Soucin - 3, Podil - 4, Modulo - 5, Umocnit - 6, Odmocnit - 7");
+	system("cls");
+	printf("Typy aritmetickych operaci:\n\n1 - Soucet\n2 - Rozdil\n3 - Soucin\n4 - Podil\n5 - Modulo\n6 - Umocnit\n7 - Odmocnit\n\n");
+	printf("Vyberte operaci: ");
 	while (true) {
 		scanf(" %d", &status->arithmeticOperType);
-		
+		system("cls");
 		switch (status->arithmeticOperType)
 		{
 		case 1:
@@ -325,7 +332,7 @@ void arithmeticOperation(CalcStatus* status) {
 			pokracovat = 1;
 			break;
 		case 5:
-			printf("\nZvolili jste operaci modulo. Koeficienty prevadim na nejblizsi cele cisla.");
+			printf("Zvolili jste operaci modulo. Koeficienty prevadim na nejblizsi cele cisla.\n");
 			status->currentOutcome = (int)status->numbers[0] % (int)status->numbers[1];
 			pokracovat = 1;
 			break;
@@ -339,14 +346,16 @@ void arithmeticOperation(CalcStatus* status) {
 			break;
 
 		default:
-			printf("Zadali jste neplatnou operaci!");
+			printf("\nZadali jste neplatnou operaci!");
 			break;
 		}
 		if (pokracovat == 1)
 		{
 			break;
 		}
-		printf("\nVyberte si aritmetickou operaci: Soucet - 1, Rozdil - 2, Soucin - 3, Podil - 4, Modulo - 5, Umocnit - 6, Odmocnit - 7");
+		system("cls");
+		printf("\nTypy aritmetickych operaci:\n\n1 - Soucet\n2 - Rozdil\n3 - Soucin\n4 - Podil\n5 - Modulo\n6 - Umocnit\n7 - Odmocnit\n\n");
+		printf("Vyberte operaci: ");
 	}
 
 
@@ -356,7 +365,8 @@ void arithmeticOperation(CalcStatus* status) {
 char askIfMemory() {
 	char useMemory = ' ';
 	while (true) {
-		printf("Do you want to use a number from memory? y/n\n");
+		system("cls");
+		printf("Chcete pouzit cislo z pameti? (y/n): ");
 		if (scanf(" %c", &useMemory) != 1) {
 			printf("scanf failed!");
 		}
@@ -373,10 +383,10 @@ char askIfMemory() {
 }
 
 void getInputFromMemory(CalcStatus* status, int numberIndex) {
-	char memoryIndex = ' ';
+	char memoryIndex = ' '; 
 	while (true) {
 		int memoryIsFilled = 0;
-		printf("which memory slot you want to use? (A:%lf B:%lf C:%lf D:%lf)\n", status->memory[0], status->memory[1], status->memory[2], status->memory[3]);
+		printf("\nHodnoty v pameti:\n(A:%.2lf B:%.2lf C:%.2lf D:%.2lf)\n\nVyberte pametovy slot: ", status->memory[0], status->memory[1], status->memory[2], status->memory[3]);
 		scanf(" %c", &memoryIndex);
 		memoryIndex = toupper(memoryIndex);
 		switch (memoryIndex) {
@@ -409,10 +419,10 @@ void getInputFromMemory(CalcStatus* status, int numberIndex) {
 void enterIntoMemory(CalcStatus* status) {
 	// TODO enter memory question and use answer to fill A,B,C,D
 	char memoryIndex;
-	printf("which memory slot you want to use? (A:%lf B:%lf C:%lf D:%lf)\n", status->memory[0], status->memory[1], status->memory[2], status->memory[3]);
+	printf("Hodnoty v pameti:\n(A:%.2lf B:%.2lf C:%.2lf D:%.2lf)\n\nVyberte pametovy slot: \n", status->memory[0], status->memory[1], status->memory[2], status->memory[3]);
 	scanf("%c", &memoryIndex);
 	double newNum;
-	printf("\nWrite the number you want to save and press enter:\n");
+	printf("\nNapiste cislo ktere chcete ulozit a stisknete enter:\n");
 	scanf("%lf", &newNum);
 	switch (memoryIndex) {
 	case 'A':
@@ -432,7 +442,7 @@ void enterIntoMemory(CalcStatus* status) {
 
 void enterOutcomeIntoMemory(CalcStatus* status) {
 	char memoryIndex;
-	printf("which memory slot you want to use? (A:%lf B:%lf C:%lf D:%lf)\n", status->memory[0], status->memory[1], status->memory[2], status->memory[3]);
+	printf("Hodnoty v pameti: (A:%.2lf B:%.2lf C:%.2lf D:%.2lf)\n\nDo ktereho slotu chcete ulozit?: ", status->memory[0], status->memory[1], status->memory[2], status->memory[3]);
 	int memorySlotChosen = 0;
 	while (true) {
 
@@ -463,9 +473,10 @@ void enterOutcomeIntoMemory(CalcStatus* status) {
 		else {
 			system("cls");
 			printf("Nespravny index pameti vybran.\n");
-			printf("Ktery index pameti chcete pouzit? (A:%lf B:%lf C:%lf D:%lf)\n", status->memory[0], status->memory[1], status->memory[2], status->memory[3]);
+			printf("Hodnoty v pameti: (A:%.2lf B:%.2lf C:%.2lf D:%.2lf)\n\nDo ktereho slotu chcete ulozit?: ", status->memory[0], status->memory[1], status->memory[2], status->memory[3]);
 		}
 		if (memorySlotChosen == 1) {
+			system("cls");
 			break;
 		}
 
@@ -476,9 +487,13 @@ double getInputNumber(char name) {
 	double inputNum;
 	while (true) {
 
+		system("cls");
+		printf("Zadejte cislo pro promennou %c: ", name);
 
-		printf("Write a number and press enter for variable %c:  \n", name);
-		if (scanf(" %lf", &inputNum) != 1) {
+		if (scanf(" \n%lf", &inputNum) == 1) {
+			printf("\n");
+		}
+		else if (scanf(" \n%lf", &inputNum) != 1) {
 			system("cls");
 			printf("invalid input! \n");
 			scanf("%*[^\n]");
@@ -493,7 +508,7 @@ double getInputNumber(char name) {
 }
 int getNumbers(CalcStatus* status) {
 	int i = 0;
-	char names[3] = { 'x', 'y', 'z' };
+	char names[20] = { 'x', 'y', 'z' };
 	if (status->operationType == KvardatickaRovnice) {
 		names[0] = 'a';
 		names[1] = 'b';
@@ -520,10 +535,9 @@ int getNumbers(CalcStatus* status) {
 
 void askForFunctionType(CalcStatus* status) {
 	int funcNo;
-	printf("vyberte si typ funkce:\n \
-		prirozeny logaritmus(1) desitkovy logaritmus(2) vlastni logaritmus: log a (x)(3)\n\
-		faktorial (4) sinus (5) kosinus (6) tangens (7) exponencialni funkci (x^y) (8)\n");
-	printf("napiste cislo funkce: ");
+	system("cls");
+	printf("Typy funkci:\n\n1 - Prirozeny logaritmus\n2 - Desitkovy logaritmus\n3 - Vlastni logaritmus: log_a (x)\n4 - Faktorial\n5 - Sinus\n6 - Kosinus\n7 - Tangens\n8 - Exponencialni funkce (x^y)\n\n");
+	printf("Napiste cislo zvolene funkce: ");
 	scanf(" %d", &funcNo);
 	switch (funcNo) {
 	case 1:
@@ -562,8 +576,8 @@ void askForFunctionType(CalcStatus* status) {
 
 int intro(CalcStatus* status) {
 
-	printf("Vyberte operaci kalkulacky: Aritmeticka operace(1) Funkce(2) Konverze Jednotek(3) Vyresit Kvardaticka Rovnice(4)\n");
-	printf("Napiste cislo operace a stiskněte Enter:\n");
+	printf("Vyberte operaci kalkulacky:\n\n1 - Aritmeticke operace\n2 - Funkce\n3 - Konverze Jednotek\n4 - Najit koreny kvadraticke rovnice\n");
+	printf("\nNapiste cislo operace a stisknete Enter: ");
 	int operation = 0;
 	int select_done = 0;
 	while (select_done == 0) {
